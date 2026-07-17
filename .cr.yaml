@@ -1,0 +1,6 @@
+owner: huscker
+git-base-url: https://api.github.com/
+git-upload-url: https://uploads.github.com/
+pages-branch: gh-pages
+pages-index-path: index.yaml
+release-name-template: "{{ .Name }}-{{ .Version }}"

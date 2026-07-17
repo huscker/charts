@@ -1,0 +1,35 @@
+apiVersion: v2
+name: s-ui
+description: Web panel built on SagerNet/Sing-Box for managing multi-protocol proxy services
+type: application
+version: 0.1.0
+appVersion: "1.5.3"
+home: https://github.com/alireza0/s-ui
+sources:
+  - https://github.com/alireza0/s-ui
+keywords:
+  - s-ui
+  - sing-box
+  - proxy
+  - vpn
+  - panel
+maintainers:
+  - name: huscker
+    email: egorgolubev@bulltrade.org
+annotations:
+  artifacthub.io/license: GPL-3.0
+  artifacthub.io/category: security
+  artifacthub.io/images: |
+    - name: s-ui
+      image: docker.io/alireza7/s-ui:1.5.3
+  artifacthub.io/links: |
+    - name: GitHub
+      url: https://github.com/alireza0/s-ui
+    - name: Chart Source
+      url: https://github.com/huscker/charts/tree/main/charts/s-ui
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial Helm chart for s-ui
+  artifacthub.io/screenshots: |
+    - title: S-UI Dashboard
+      url: https://raw.githubusercontent.com/alireza0/s-ui/main/screenshots/preview.png

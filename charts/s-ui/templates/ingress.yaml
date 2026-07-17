@@ -1,0 +1,92 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "s-ui.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "s-ui.labels" . | nindent 4 }}
+  {{- with (merge .Values.ingress.annotations .Values.commonAnnotations) }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.hostname | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "s-ui.fullname" . }}
+                port:
+                  name: panel
+    {{- range .Values.ingress.extraHosts }}
+    - host: {{ .hostname | quote }}
+      http:
+        paths:
+          - path: {{ .path | default "/" }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "s-ui.fullname" $ }}
+                port:
+                  name: panel
+    {{- end }}
+    {{- with .Values.ingress.extraRules }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.ingress.tls .Values.ingress.extraTls }}
+  tls:
+    {{- if .Values.ingress.tls }}
+    - hosts:
+        - {{ .Values.ingress.hostname | quote }}
+        {{- if .Values.ingress.tlsWwwPrefix }}
+        - {{ printf "www.%s" .Values.ingress.hostname | quote }}
+        {{- end }}
+      secretName: {{ printf "%s-tls" (include "s-ui.fullname" .) }}
+    {{- end }}
+    {{- range .Values.ingress.extraTls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- if and .Values.ingress.subscription.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ printf "%s-subscription" (include "s-ui.fullname" .) }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "s-ui.labels" . | nindent 4 }}
+  {{- with (merge .Values.ingress.subscription.annotations .Values.commonAnnotations) }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.subscription.hostname | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.subscription.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "s-ui.fullname" . }}
+                port:
+                  name: subscription
+  {{- if .Values.ingress.subscription.tls }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.subscription.hostname | quote }}
+      secretName: {{ printf "%s-subscription-tls" (include "s-ui.fullname" .) }}
+  {{- end }}
+{{- end }}

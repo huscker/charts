@@ -1,0 +1,312 @@
+## @section Global parameters
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.storageClass Global StorageClass for Persistent Volume(s)
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+## @section Common parameters
+## @param nameOverride String to partially override common.names.fullname
+## @param fullnameOverride String to fully override common.names.fullname
+## @param commonLabels Labels to add to all deployed objects
+## @param commonAnnotations Annotations to add to all deployed objects
+nameOverride: ""
+fullnameOverride: ""
+commonLabels: {}
+commonAnnotations: {}
+
+## @section S-UI image parameters
+## @param image.registry S-UI image registry
+## @param image.repository S-UI image repository
+## @param image.tag S-UI image tag (immutable tags are recommended)
+## @param image.pullPolicy S-UI image pull policy
+## @param image.pullSecrets S-UI image pull secrets
+image:
+  registry: docker.io
+  repository: alireza7/s-ui
+  tag: "1.5.3"
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+## @section S-UI deployment parameters
+## @param replicaCount Number of S-UI replicas to deploy
+replicaCount: 1
+
+## @param updateStrategy.type S-UI deployment strategy type
+updateStrategy:
+  type: RollingUpdate
+
+## @section S-UI configuration parameters
+## @param config.logLevel Log level (debug/info/warn/error)
+## @param config.debug Enable debug mode
+## @param config.singboxApi Singbox API endpoint URL
+## @param config.binFolder Binary folder path (relative to /app)
+## @param config.dbFolder Database folder path (relative to /app)
+## @param config.timezone Container timezone
+config:
+  logLevel: info
+  debug: false
+  singboxApi: ""
+  binFolder: "bin"
+  dbFolder: "db"
+  timezone: "Asia/Tehran"
+
+## @param extraEnvVars Array with extra environment variables to add to S-UI
+extraEnvVars: []
+
+## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars
+extraEnvVarsCM: ""
+
+## @param extraEnvVarsSecret Name of existing Secret containing extra env vars
+extraEnvVarsSecret: ""
+
+## @section S-UI Service parameters
+## @param service.type S-UI service type
+## @param service.panel.port Panel service port (web UI)
+## @param service.panel.nodePort Node port for panel (if service type is NodePort)
+## @param service.subscription.port Subscription service port
+## @param service.subscription.nodePort Node port for subscription (if service type is NodePort)
+## @param service.clusterIP S-UI service Cluster IP
+## @param service.loadBalancerIP S-UI service Load Balancer IP
+## @param service.loadBalancerSourceRanges S-UI service Load Balancer sources
+## @param service.externalTrafficPolicy S-UI service external traffic policy
+## @param service.annotations Additional custom annotations for S-UI service
+service:
+  type: ClusterIP
+  panel:
+    port: 2095
+    nodePort: ""
+  subscription:
+    port: 2096
+    nodePort: ""
+  clusterIP: ""
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  externalTrafficPolicy: Cluster
+  annotations: {}
+  extraPorts: []
+
+## @section Ingress parameters
+## @param ingress.enabled Enable ingress record generation for S-UI
+## @param ingress.ingressClassName IngressClass that will be used
+## @param ingress.hostname Default host for the ingress record
+## @param ingress.annotations Additional custom annotations for the ingress record
+## @param ingress.tls Enable TLS configuration for the host defined at `ingress.hostname`
+## @param ingress.tlsWwwPrefix Adds www subdomain to TLS certificate
+## @param ingress.extraHosts An array with additional hostname(s) to be covered with the ingress record
+## @param ingress.extraTls TLS configuration for additional hostname(s)
+## @param ingress.secrets Custom TLS certificates as secrets
+## @param ingress.extraRules Additional rules to be covered with this ingress record
+ingress:
+  enabled: false
+  ingressClassName: ""
+  hostname: s-ui.local
+  path: /app/
+  annotations: {}
+  tls: false
+  tlsWwwPrefix: false
+  extraHosts: []
+  extraTls: []
+  secrets: []
+  extraRules: []
+  ## Subscription ingress (separate hostname/path for sub service)
+  subscription:
+    enabled: false
+    hostname: s-ui.local
+    path: /sub/
+    annotations: {}
+    tls: false
+
+## @section Persistence parameters
+## @param persistence.enabled Enable persistence for the database
+## @param persistence.storageClass PVC Storage Class for S-UI database
+## @param persistence.accessModes PVC Access Modes for S-UI database
+## @param persistence.size PVC Storage Request for S-UI database
+## @param persistence.annotations Annotations for the PVC
+## @param persistence.existingClaim Name of an existing PVC to use
+persistence:
+  enabled: true
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  annotations: {}
+  existingClaim: ""
+  mountPath: /app/db
+
+## @param certPersistence.enabled Enable persistence for SSL certificates
+## @param certPersistence.storageClass PVC Storage Class for certificates
+## @param certPersistence.accessModes PVC Access Modes for certificates
+## @param certPersistence.size PVC Storage Request for certificates
+## @param certPersistence.existingClaim Name of an existing PVC to use
+certPersistence:
+  enabled: false
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 100Mi
+  annotations: {}
+  existingClaim: ""
+  mountPath: /root/cert
+
+## @section RBAC parameters
+## @param serviceAccount.create Enable creation of a ServiceAccount for S-UI
+## @param serviceAccount.name Name of the ServiceAccount to use
+## @param serviceAccount.annotations Annotations for the ServiceAccount
+## @param serviceAccount.automountServiceAccountToken Automount service account token
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+## @section Security context parameters
+## @param podSecurityContext.enabled Enable pod security context
+## @param podSecurityContext.fsGroup Group ID for the volumes
+podSecurityContext:
+  enabled: true
+  fsGroup: 0
+
+## @param containerSecurityContext.enabled Enable container security context
+## @param containerSecurityContext.runAsUser User ID for the container
+## @param containerSecurityContext.runAsNonRoot Run as non-root user
+## @param containerSecurityContext.readOnlyRootFilesystem Set root filesystem as read-only
+## @param containerSecurityContext.allowPrivilegeEscalation Allow privilege escalation
+## @param containerSecurityContext.capabilities.drop Drop capabilities
+containerSecurityContext:
+  enabled: true
+  runAsUser: 0
+  runAsNonRoot: false
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - NET_ADMIN
+      - NET_RAW
+
+## @section Resource parameters
+## @param resources.limits.cpu CPU limit for S-UI
+## @param resources.limits.memory Memory limit for S-UI
+## @param resources.requests.cpu CPU request for S-UI
+## @param resources.requests.memory Memory request for S-UI
+resources:
+  limits: {}
+  requests: {}
+
+## @section Liveness probe parameters
+## @param livenessProbe.enabled Enable livenessProbe
+## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+## @param livenessProbe.periodSeconds Period seconds for livenessProbe
+## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
+## @param livenessProbe.successThreshold Success threshold for livenessProbe
+livenessProbe:
+  enabled: true
+  path: /app/
+  port: panel
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 10
+  failureThreshold: 3
+  successThreshold: 1
+
+## @section Readiness probe parameters
+## @param readinessProbe.enabled Enable readinessProbe
+## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+## @param readinessProbe.periodSeconds Period seconds for readinessProbe
+## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
+## @param readinessProbe.successThreshold Success threshold for readinessProbe
+readinessProbe:
+  enabled: true
+  path: /app/
+  port: panel
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+
+## @section Startup probe parameters
+## @param startupProbe.enabled Enable startupProbe
+## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+## @param startupProbe.periodSeconds Period seconds for startupProbe
+## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
+## @param startupProbe.failureThreshold Failure threshold for startupProbe
+startupProbe:
+  enabled: true
+  path: /app/
+  port: panel
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 30
+
+## @section Autoscaling parameters
+## @param autoscaling.enabled Enable Horizontal Pod Autoscaler
+## @param autoscaling.minReplicas Minimum number of replicas
+## @param autoscaling.maxReplicas Maximum number of replicas
+## @param autoscaling.targetCPU Target CPU utilization percentage
+## @param autoscaling.targetMemory Target Memory utilization percentage
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPU: 80
+  targetMemory: ""
+
+## @section Pod Disruption Budget parameters
+## @param pdb.create Enable PodDisruptionBudget
+## @param pdb.minAvailable Minimum number of pods that must be available
+## @param pdb.maxUnavailable Maximum number of pods that may be unavailable
+pdb:
+  create: false
+  minAvailable: ""
+  maxUnavailable: 1
+
+## @section Network Policy parameters
+## @param networkPolicy.enabled Enable NetworkPolicy
+## @param networkPolicy.allowExternal Allow external access
+## @param networkPolicy.allowExternalEgress Allow external egress
+## @param networkPolicy.extraIngress Additional ingress rules
+## @param networkPolicy.extraEgress Additional egress rules
+networkPolicy:
+  enabled: false
+  allowExternal: true
+  allowExternalEgress: true
+  extraIngress: []
+  extraEgress: []
+
+## @section Scheduling parameters
+## @param nodeSelector Node labels for pod assignment
+## @param tolerations Tolerations for pod assignment
+## @param affinity Affinity for pod assignment
+## @param podLabels Extra labels for S-UI pods
+## @param podAnnotations Annotations for S-UI pods
+## @param priorityClassName S-UI pod priority class name
+## @param schedulerName Name of the k8s scheduler
+## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podLabels: {}
+podAnnotations: {}
+priorityClassName: ""
+schedulerName: ""
+topologySpreadConstraints: []
+
+## @param extraVolumes Optionally specify extra volumes
+extraVolumes: []
+
+## @param extraVolumeMounts Optionally specify extra volume mounts
+extraVolumeMounts: []
+
+## @param initContainers Add additional init containers
+initContainers: []
+
+## @param sidecars Add additional sidecar containers
+sidecars: []

@@ -1,0 +1,37 @@
+CHART NAME: {{ .Chart.Name }}
+CHART VERSION: {{ .Chart.Version }}
+APP VERSION: {{ .Chart.AppVersion }}
+
+** Please be patient while the chart is being deployed **
+
+S-UI has been deployed successfully. Here is how to access it:
+
+{{- if .Values.ingress.enabled }}
+  Access the S-UI panel at:
+  http{{ if .Values.ingress.tls }}s{{ end }}://{{ .Values.ingress.hostname }}{{ .Values.ingress.path }}
+
+  {{- if .Values.ingress.subscription.enabled }}
+  Access the Subscription service at:
+  http{{ if .Values.ingress.subscription.tls }}s{{ end }}://{{ .Values.ingress.subscription.hostname }}{{ .Values.ingress.subscription.path }}
+  {{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "s-ui.fullname" . }})
+  echo "S-UI Panel: http://$NODE_IP:$NODE_PORT/app/"
+{{- else if contains "LoadBalancer" .Values.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+  Watch the status with: kubectl get svc --namespace {{ .Release.Namespace }} -w {{ include "s-ui.fullname" . }}
+
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "s-ui.fullname" . }} --template "{{ "{{" }}range .status.loadBalancer.ingress{{ "}}" }}{{ "{{" }}.ip{{ "}}" }}{{ "{{" }}end{{ "}}" }}")
+  echo "S-UI Panel: http://$SERVICE_IP:{{ .Values.service.panel.port }}/app/"
+  echo "Subscription: http://$SERVICE_IP:{{ .Values.service.subscription.port }}/sub/"
+{{- else if contains "ClusterIP" .Values.service.type }}
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "s-ui.fullname" . }} {{ .Values.service.panel.port }}:{{ .Values.service.panel.port }} &
+  echo "S-UI Panel: http://127.0.0.1:{{ .Values.service.panel.port }}/app/"
+  echo "Subscription: http://127.0.0.1:{{ .Values.service.subscription.port }}/sub/"
+{{- end }}
+
+Default credentials: admin / admin (change immediately after first login)
+
+To watch pod status:
+  kubectl get pods --namespace {{ .Release.Namespace }} -l "{{ include "s-ui.selectorLabels" . }}" -w

@@ -1,0 +1,28 @@
+# CI test values — minimal resources, no persistence, NodePort for easy access
+replicaCount: 1
+
+service:
+  type: NodePort
+
+persistence:
+  enabled: false
+
+certPersistence:
+  enabled: false
+
+livenessProbe:
+  enabled: false
+
+readinessProbe:
+  enabled: false
+
+startupProbe:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
