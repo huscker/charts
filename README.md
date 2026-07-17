@@ -13,8 +13,8 @@ helm repo update
 
 | Chart | Description | Version |
 |-------|-------------|---------|
-| [s-ui](./charts/s-ui) | Web panel built on SagerNet/Sing-Box | 0.1.0 |
-| [sing-box](./charts/sing-box) | Universal proxy platform (SagerNet/sing-box) | 0.1.0 |
+| [s-ui](./charts/s-ui) | Web panel built on SagerNet/Sing-Box | 1.0.0 |
+| [sing-box](./charts/sing-box) | Universal proxy platform (SagerNet/sing-box) | 1.0.0 |
 
 ## Contributing
 
