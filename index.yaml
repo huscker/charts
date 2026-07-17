@@ -20,6 +20,49 @@ entries:
           url: https://raw.githubusercontent.com/alireza0/s-ui/main/screenshots/preview.png
     apiVersion: v2
     appVersion: 1.5.3
+    created: "2026-07-17T08:57:09.416285138Z"
+    description: Web panel built on SagerNet/Sing-Box for managing multi-protocol
+      proxy services
+    digest: ee3b263e95ec0a3febc7940a2a177c47e0cecda37324513626adf1257ff1eaa7
+    home: https://github.com/alireza0/s-ui
+    keywords:
+    - s-ui
+    - sing-box-ui
+    - singbox-ui
+    - singbox
+    - sing-box
+    - proxy
+    - vpn
+    - panel
+    maintainers:
+    - email: egorgolubev@bulltrade.org
+      name: huscker
+    name: s-ui
+    sources:
+    - https://github.com/alireza0/s-ui
+    type: application
+    urls:
+    - https://github.com/huscker/charts/releases/download/s-ui-1.0.3/s-ui-1.0.3.tgz
+    version: 1.0.3
+  - annotations:
+      artifacthub.io/category: security
+      artifacthub.io/changes: |
+        - kind: added
+          description: Initial Helm chart for s-ui
+      artifacthub.io/images: |
+        - name: s-ui
+          image: docker.io/alireza7/s-ui:1.5.3
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: GitHub
+          url: https://github.com/alireza0/s-ui
+        - name: Chart Source
+          url: https://github.com/huscker/charts/tree/main/charts/s-ui
+      artifacthub.io/screenshots: |
+        - title: S-UI Dashboard
+          url: https://raw.githubusercontent.com/alireza0/s-ui/main/screenshots/preview.png
+    apiVersion: v2
+    appVersion: 1.5.3
     created: "2026-07-17T08:25:15.43846462Z"
     description: Web panel built on SagerNet/Sing-Box for managing multi-protocol
       proxy services
@@ -122,6 +165,44 @@ entries:
     - https://github.com/huscker/charts/releases/download/s-ui-1.0.0/s-ui-1.0.0.tgz
     version: 1.0.0
   sing-box:
+  - annotations:
+      artifacthub.io/category: security
+      artifacthub.io/changes: |
+        - kind: added
+          description: Initial Helm chart for sing-box
+      artifacthub.io/images: |
+        - name: sing-box
+          image: ghcr.io/sagernet/sing-box:v1.12.0
+      artifacthub.io/license: GPL-3.0
+      artifacthub.io/links: |
+        - name: GitHub
+          url: https://github.com/SagerNet/sing-box
+        - name: Documentation
+          url: https://sing-box.sagernet.org/
+        - name: Chart Source
+          url: https://github.com/huscker/charts/tree/main/charts/sing-box
+    apiVersion: v2
+    appVersion: 1.12.0
+    created: "2026-07-17T08:57:09.534935319Z"
+    description: Universal proxy platform based on SagerNet/sing-box
+    digest: e00509bd22dd0499ac1bff71f5520947d22668be5e1acec3419d0a24f24ca1f0
+    home: https://github.com/SagerNet/sing-box
+    keywords:
+    - singbox
+    - sing-box
+    - proxy
+    - vpn
+    - sager
+    maintainers:
+    - email: egorgolubev@bulltrade.org
+      name: huscker
+    name: sing-box
+    sources:
+    - https://github.com/SagerNet/sing-box
+    type: application
+    urls:
+    - https://github.com/huscker/charts/releases/download/sing-box-1.0.3/sing-box-1.0.3.tgz
+    version: 1.0.3
   - annotations:
       artifacthub.io/category: security
       artifacthub.io/changes: |
@@ -283,4 +364,4 @@ entries:
     urls:
     - https://github.com/huscker/charts/releases/download/townsquare-1.0.4/townsquare-1.0.4.tgz
     version: 1.0.4
-generated: "2026-07-17T08:42:53.568925528Z"
+generated: "2026-07-17T08:57:09.534959535Z"
