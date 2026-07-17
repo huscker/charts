@@ -40,10 +40,10 @@ jobs:
 
       - name: Copy artifacthub-repo.yml to gh-pages
         run: |
+          ARTIFACT_FILE="$GITHUB_WORKSPACE/artifacthub-repo.yml"
           git fetch origin gh-pages --depth=1 || true
           git checkout gh-pages
-          cp "$GITHUB_WORKSPACE/artifacthub-repo.yml" . 2>/dev/null || \
-            git show origin/main:artifacthub-repo.yml > artifacthub-repo.yml
+          cp "$ARTIFACT_FILE" artifacthub-repo.yml
           git add artifacthub-repo.yml
           git diff --staged --quiet || git commit -m "Update artifacthub-repo.yml"
           git push origin gh-pages
