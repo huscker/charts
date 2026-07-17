@@ -1,0 +1,29 @@
+repositories:
+  - name: huscker
+    url: https://huscker.github.io/charts/
+
+releases:
+  - name: s-ui
+    namespace: proxy
+    createNamespace: true
+    chart: huscker/s-ui
+    version: 0.1.0
+    values:
+      - charts/s-ui/values.yaml
+    set:
+      - name: service.type
+        value: ClusterIP
+      - name: ingress.enabled
+        value: false
+      - name: persistence.enabled
+        value: true
+      - name: persistence.size
+        value: 1Gi
+
+  - name: sing-box
+    namespace: proxy
+    createNamespace: true
+    chart: huscker/sing-box
+    version: 0.1.0
+    values:
+      - charts/sing-box/values.yaml

@@ -1,0 +1,155 @@
+## @section Global parameters
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+## @section Common parameters
+nameOverride: ""
+fullnameOverride: ""
+commonLabels: {}
+commonAnnotations: {}
+
+## @section sing-box image parameters
+## @param image.registry sing-box image registry
+## @param image.repository sing-box image repository
+## @param image.tag sing-box image tag (immutable tags are recommended)
+## @param image.pullPolicy sing-box image pull policy
+image:
+  registry: ghcr.io
+  repository: sagernet/sing-box
+  tag: "v1.12.0"
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+## @param replicaCount Number of sing-box replicas
+replicaCount: 1
+
+## @param updateStrategy.type Deployment strategy type
+updateStrategy:
+  type: RollingUpdate
+
+## @section sing-box configuration
+## @param config Inline sing-box JSON configuration (mounted as /etc/sing-box/config.json)
+config: |
+  {
+    "log": {
+      "level": "info",
+      "timestamp": true
+    },
+    "inbounds": [
+      {
+        "type": "mixed",
+        "listen": "::",
+        "listen_port": 2080,
+        "sniff": true
+      }
+    ],
+    "outbounds": [
+      {
+        "type": "direct"
+      }
+    ]
+  }
+
+## @section Service parameters
+## @param service.type Service type
+## @param service.port Main inbound port
+## @param service.annotations Additional annotations for the service
+service:
+  type: ClusterIP
+  port: 2080
+  annotations: {}
+  extraPorts: []
+
+## @section Ingress parameters
+ingress:
+  enabled: false
+  ingressClassName: ""
+  hostname: sing-box.local
+  annotations: {}
+  tls: false
+
+## @section Persistence parameters
+persistence:
+  enabled: false
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  annotations: {}
+  existingClaim: ""
+  mountPath: /var/lib/sing-box
+
+## @section ServiceAccount
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+## @section Security context
+podSecurityContext:
+  enabled: true
+  fsGroup: 65534
+
+containerSecurityContext:
+  enabled: true
+  runAsUser: 65534
+  runAsNonRoot: true
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - NET_BIND_SERVICE
+
+## @section Resources
+resources:
+  limits: {}
+  requests: {}
+
+## @section Probes
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+  successThreshold: 1
+
+## @section Autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPU: 80
+  targetMemory: ""
+
+## @section Pod Disruption Budget
+pdb:
+  create: false
+  minAvailable: ""
+  maxUnavailable: 1
+
+## @section Scheduling
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podLabels: {}
+podAnnotations: {}
+priorityClassName: ""
+
+extraVolumes: []
+extraVolumeMounts: []
+initContainers: []
+sidecars: []

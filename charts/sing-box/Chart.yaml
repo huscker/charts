@@ -1,0 +1,33 @@
+apiVersion: v2
+name: sing-box
+description: Universal proxy platform based on SagerNet/sing-box
+type: application
+version: 0.1.0
+appVersion: "1.12.0"
+home: https://github.com/SagerNet/sing-box
+sources:
+  - https://github.com/SagerNet/sing-box
+keywords:
+  - sing-box
+  - proxy
+  - vpn
+  - sager
+maintainers:
+  - name: huscker
+    email: egorgolubev@bulltrade.org
+annotations:
+  artifacthub.io/license: GPL-3.0
+  artifacthub.io/category: security
+  artifacthub.io/images: |
+    - name: sing-box
+      image: ghcr.io/sagernet/sing-box:v1.12.0
+  artifacthub.io/links: |
+    - name: GitHub
+      url: https://github.com/SagerNet/sing-box
+    - name: Documentation
+      url: https://sing-box.sagernet.org/
+    - name: Chart Source
+      url: https://github.com/huscker/charts/tree/main/charts/sing-box
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial Helm chart for sing-box

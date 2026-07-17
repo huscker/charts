@@ -1,0 +1,19 @@
+CHART NAME: {{ .Chart.Name }}
+CHART VERSION: {{ .Chart.Version }}
+APP VERSION: {{ .Chart.AppVersion }}
+
+** Please be patient while the chart is being deployed **
+
+sing-box has been deployed successfully.
+
+{{- if contains "NodePort" .Values.service.type }}
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "sing-box.fullname" . }})
+  echo "Proxy endpoint: $NODE_IP:$NODE_PORT"
+{{- else if contains "ClusterIP" .Values.service.type }}
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "sing-box.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+  echo "Proxy endpoint: 127.0.0.1:{{ .Values.service.port }}"
+{{- end }}
+
+To update the configuration, modify the config value and run:
+  helm upgrade {{ .Release.Name }} huscker/sing-box --set config=...
