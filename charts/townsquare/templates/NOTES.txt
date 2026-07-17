@@ -1,0 +1,61 @@
+==========================================================================
+  Blood on the Clocktower Town Square has been deployed!
+==========================================================================
+
+{{- if .Values.ingress.enabled }}
+
+1. Access the application via the hostname:
+
+{{- if .Values.ingress.hostname }}
+   http{{ if .Values.ingress.tls }}s{{ end }}://{{ .Values.ingress.hostname }}
+{{- end }}
+{{- range .Values.ingress.extraHosts }}
+   http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .name }}
+{{- end }}
+
+{{- else if or (eq .Values.frontend.service.type "LoadBalancer") (eq .Values.frontend.service.type "NodePort") }}
+
+1. Get the application URL by running:
+
+{{- if (eq .Values.frontend.service.type "NodePort") }}
+   export NODE_PORT=$(kubectl get --namespace {{ include "common.names.namespace" . }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "townsquare.frontend.fullname" . }})
+   export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+   echo "Frontend: http://$NODE_IP:$NODE_PORT"
+{{- else }}
+   NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+   export SERVICE_IP=$(kubectl get svc --namespace {{ include "common.names.namespace" . }} {{ include "townsquare.frontend.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+   echo "Frontend: http://$SERVICE_IP:{{ .Values.frontend.service.ports.http }}"
+{{- end }}
+
+{{- else }}
+
+1. Access the application by port-forwarding:
+
+   kubectl port-forward --namespace {{ include "common.names.namespace" . }} svc/{{ include "townsquare.frontend.fullname" . }} 8080:{{ .Values.frontend.service.ports.http }}
+   echo "Frontend: http://localhost:8080"
+
+   kubectl port-forward --namespace {{ include "common.names.namespace" . }} svc/{{ include "townsquare.backend.fullname" . }} 8081:{{ .Values.backend.service.ports.ws }}
+   echo "Backend (WebSocket): ws://localhost:8081"
+
+{{- end }}
+
+2. The WebSocket backend is available at:
+{{- if .Values.ingress.enabled }}
+   {{ .Values.ingress.wsPath }} on your ingress host
+{{- else }}
+   The backend service: {{ include "townsquare.backend.fullname" . }}:{{ .Values.backend.service.ports.ws }}
+{{- end }}
+
+{{- if .Values.metrics.enabled }}
+
+3. Prometheus metrics are exposed at /metrics on the backend.
+{{- if .Values.metrics.serviceMonitor.enabled }}
+   ServiceMonitor "{{ include "townsquare.backend.fullname" . }}" created for auto-discovery.
+{{- end }}
+{{- end }}
+
+4. Useful commands:
+
+   kubectl get pods --namespace {{ include "common.names.namespace" . }} -l app.kubernetes.io/instance={{ .Release.Name }}
+   kubectl logs --namespace {{ include "common.names.namespace" . }} -l app.kubernetes.io/instance={{ .Release.Name }} -f
+   helm uninstall {{ .Release.Name }} --namespace {{ include "common.names.namespace" . }}

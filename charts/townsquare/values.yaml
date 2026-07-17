@@ -1,0 +1,561 @@
+## @section Global parameters
+## Global Docker image parameters
+##
+global:
+  ## @param global.imageRegistry Global Docker image registry
+  imageRegistry: ""
+  ## @param global.imagePullSecrets Global Docker registry secret names as an array
+  imagePullSecrets: []
+  # imagePullSecrets:
+  #   - name: my-registry-secret
+
+## @section Common parameters
+##
+## @param commonLabels Labels to add to all deployed resources
+commonLabels: {}
+## @param commonAnnotations Annotations to add to all deployed resources
+commonAnnotations: {}
+## @param namespaceOverride Override the deployment namespace
+namespaceOverride: ""
+
+## @section Frontend parameters
+##
+frontend:
+  image:
+    ## @param frontend.image.registry Frontend image registry
+    registry: ghcr.io
+    ## @param frontend.image.repository Frontend image repository
+    repository: huscker/townsquare-frontend
+    ## @param frontend.image.tag Frontend image tag (immutable tags are recommended)
+    tag: 2.15.2
+    ## @param frontend.image.digest Frontend image digest in the way sha256:aa...
+    digest: ""
+    ## @param frontend.image.pullPolicy Frontend image pull policy
+    pullPolicy: IfNotPresent
+    ## @param frontend.image.pullSecrets Frontend image pull secrets
+    pullSecrets: []
+
+  ## @param frontend.replicaCount Number of frontend replicas
+  replicaCount: 1
+  ## @param frontend.revisionHistoryLimit Number of old ReplicaSets to retain
+  revisionHistoryLimit: 10
+  ## @param frontend.updateStrategy Frontend deployment update strategy
+  updateStrategy: {}
+  # updateStrategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 1
+  #     maxUnavailable: 0
+  ## @param frontend.containerPort Frontend HTTP container port
+  containerPort: 8080
+  ## @param frontend.command Override default container command
+  command: []
+  ## @param frontend.args Override default container args
+  args: []
+  ## @param frontend.hostAliases Frontend pods host aliases
+  hostAliases: []
+  ## @param frontend.hostNetwork Host network
+  hostNetwork: false
+  ## @param frontend.dnsPolicy Specify DNS policy
+  dnsPolicy: ""
+  ## @param frontend.dnsConfig Custom DNS config
+  dnsConfig: {}
+  ## @param frontend.runtimeClassName Name of the runtime class
+  runtimeClassName: ""
+  ## @param frontend.priorityClassName Priority class name
+  priorityClassName: ""
+  ## @param frontend.schedulerName Name of the k8s scheduler
+  schedulerName: ""
+  ## @param frontend.terminationGracePeriodSeconds Termination grace period (seconds)
+  terminationGracePeriodSeconds: ""
+
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 101
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  podSecurityContext:
+    enabled: true
+    fsGroupChangePolicy: "OnRootMismatch"
+    seccompProfile:
+      type: "RuntimeDefault"
+
+  ## @param frontend.podLabels Extra labels for frontend pods
+  podLabels: {}
+  ## @param frontend.podAnnotations Extra annotations for frontend pods
+  podAnnotations: {}
+
+  ## @param frontend.resourcesPreset Resource preset (nano, micro, small, medium, large, xlarge, 2xlarge, none)
+  resourcesPreset: "nano"
+  ## @param frontend.resources Set container requests and limits for different resources
+  resources: {}
+  # resources:
+  #   requests:
+  #     cpu: 50m
+  #     memory: 64Mi
+  #   limits:
+  #     cpu: 100m
+  #     memory: 128Mi
+
+  ## Frontend liveness probe
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+    successThreshold: 1
+  ## @param frontend.customLivenessProbe Custom liveness probe override
+  customLivenessProbe: {}
+
+  ## Frontend readiness probe
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+    successThreshold: 1
+  ## @param frontend.customReadinessProbe Custom readiness probe override
+  customReadinessProbe: {}
+
+  ## Frontend startup probe
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+    successThreshold: 1
+  ## @param frontend.customStartupProbe Custom startup probe override
+  customStartupProbe: {}
+
+  ## @param frontend.extraEnvVars Array with extra environment variables
+  extraEnvVars: []
+  ## @param frontend.extraEnvVarsCM Name of existing ConfigMap with extra env vars
+  extraEnvVarsCM: ""
+  ## @param frontend.extraEnvVarsSecret Name of existing Secret with extra env vars
+  extraEnvVarsSecret: ""
+
+  ## @param frontend.extraVolumes Optionally specify extra list of additional volumes for the frontend pods
+  extraVolumes: []
+  ## @param frontend.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the frontend container
+  extraVolumeMounts: []
+  ## @param frontend.initContainers Add additional init containers to the frontend pods
+  initContainers: []
+  ## @param frontend.sidecars Add additional sidecar containers to the frontend pods
+  sidecars: []
+
+  ## Network policy
+  networkPolicy:
+    ## @param frontend.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+    enabled: false
+
+  ## Autoscaling
+  autoscaling:
+    ## @param frontend.autoscaling.enabled Enable HPA for the frontend
+    enabled: false
+    ## @param frontend.autoscaling.minReplicas Minimum number of replicas
+    minReplicas: 1
+    ## @param frontend.autoscaling.maxReplicas Maximum number of replicas
+    maxReplicas: 3
+    ## @param frontend.autoscaling.targetCPUUtilizationPercentage Target CPU utilization percentage
+    targetCPUUtilizationPercentage: 80
+    ## @param frontend.autoscaling.targetMemoryUtilizationPercentage Target Memory utilization percentage
+    targetMemoryUtilizationPercentage: 80
+
+  ## Pod Disruption Budget
+  pdb:
+    ## @param frontend.pdb.create Enable a Pod Disruption Budget for frontend
+    create: false
+    ## @param frontend.pdb.minAvailable Min number of pods that must still be available after the eviction
+    minAvailable: 0
+    ## @param frontend.pdb.maxUnavailable Max number of pods that can be unavailable after the eviction
+    maxUnavailable: 1
+
+  ## @param frontend.nodeSelector Node labels for frontend pod assignment
+  nodeSelector: {}
+  ## @param frontend.tolerations Tolerations for frontend pod assignment
+  tolerations: []
+  ## @param frontend.affinity Map of frontend node/pod affinities
+  affinity: {}
+  ## @param frontend.podAffinityPreset Pod affinity preset
+  podAffinityPreset: ""
+  ## @param frontend.podAntiAffinityPreset Pod anti-affinity preset
+  podAntiAffinityPreset: soft
+  ## @param frontend.nodeAffinityPreset.type Node affinity preset type
+  ## @param frontend.nodeAffinityPreset.key Node affinity preset key
+  ## @param frontend.nodeAffinityPreset.values Node affinity preset values
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  ## @param frontend.topologySpreadConstraints Topology Spread Constraints for frontend pod assignment
+  topologySpreadConstraints: []
+  ## @param frontend.lifecycleHooks Add lifecycle hooks for frontend container
+  lifecycleHooks: {}
+
+  ## Runtime configuration injected into the browser
+  runtimeConfig:
+    ## @param frontend.runtimeConfig.wsUrl WebSocket backend URL for the frontend to connect to.
+    ## If empty, the frontend derives it from window.location (wss://host/ws/).
+    wsUrl: ""
+    ## @param frontend.runtimeConfig.defaultLanguage Default UI language. Supported: "en", "ru".
+    ## If empty, falls back to localStorage preference or "en".
+    defaultLanguage: ""
+
+  ## @param frontend.nginxConfig Override the nginx server block config (multiline string).
+  ## When set, a ConfigMap is created and mounted over the baked-in default.conf
+  ## from docker/nginx.conf. Leave empty to use the image default.
+  nginxConfig: ""
+
+  service:
+    ## @param frontend.service.type Kubernetes Service type
+    type: ClusterIP
+    ## @param frontend.service.ports.http Frontend service HTTP port
+    ports:
+      http: 8080
+    ## @param frontend.service.clusterIP Frontend service Cluster IP
+    clusterIP: ""
+    ## @param frontend.service.nodePorts.http Frontend service node port (when type=NodePort)
+    nodePorts:
+      http: ""
+    ## @param frontend.service.sessionAffinity Control where client requests go
+    sessionAffinity: None
+    ## @param frontend.service.sessionAffinityConfig Additional settings for the sessionAffinity
+    sessionAffinityConfig: {}
+    ## @param frontend.service.externalTrafficPolicy Frontend service external traffic policy
+    externalTrafficPolicy: Cluster
+    ## @param frontend.service.loadBalancerIP loadBalancerIP if service type is LoadBalancer
+    loadBalancerIP: ""
+    ## @param frontend.service.loadBalancerSourceRanges loadBalancerSourceRanges if service type is LoadBalancer
+    loadBalancerSourceRanges: []
+    ## @param frontend.service.loadBalancerClass loadBalancerClass if service type is LoadBalancer
+    loadBalancerClass: ""
+    ## @param frontend.service.annotations Additional custom annotations for the frontend service
+    annotations: {}
+
+## @section Backend parameters
+##
+backend:
+  image:
+    ## @param backend.image.registry Backend image registry
+    registry: ghcr.io
+    ## @param backend.image.repository Backend image repository
+    repository: huscker/townsquare-backend
+    ## @param backend.image.tag Backend image tag (immutable tags are recommended)
+    tag: 2.15.2
+    ## @param backend.image.digest Backend image digest in the way sha256:aa...
+    digest: ""
+    ## @param backend.image.pullPolicy Backend image pull policy
+    pullPolicy: IfNotPresent
+    ## @param backend.image.pullSecrets Backend image pull secrets
+    pullSecrets: []
+
+  ## @param backend.replicaCount Number of backend replicas
+  replicaCount: 1
+  ## @param backend.revisionHistoryLimit Number of old ReplicaSets to retain
+  revisionHistoryLimit: 10
+  ## @param backend.updateStrategy Backend deployment update strategy
+  updateStrategy: {}
+  ## @param backend.containerPort Backend WebSocket container port
+  containerPort: 8080
+  ## @param backend.command Override default container command
+  command: []
+  ## @param backend.args Override default container args
+  args: []
+  ## @param backend.hostAliases Backend pods host aliases
+  hostAliases: []
+  ## @param backend.hostNetwork Host network
+  hostNetwork: false
+  ## @param backend.dnsPolicy Specify DNS policy
+  dnsPolicy: ""
+  ## @param backend.dnsConfig Custom DNS config
+  dnsConfig: {}
+  ## @param backend.runtimeClassName Name of the runtime class
+  runtimeClassName: ""
+  ## @param backend.priorityClassName Priority class name
+  priorityClassName: ""
+  ## @param backend.schedulerName Name of the k8s scheduler
+  schedulerName: ""
+  ## @param backend.terminationGracePeriodSeconds Termination grace period (seconds)
+  terminationGracePeriodSeconds: ""
+
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  podSecurityContext:
+    enabled: true
+    fsGroupChangePolicy: "OnRootMismatch"
+    seccompProfile:
+      type: "RuntimeDefault"
+
+  ## @param backend.podLabels Extra labels for backend pods
+  podLabels: {}
+  ## @param backend.podAnnotations Extra annotations for backend pods
+  podAnnotations: {}
+
+  ## @param backend.resourcesPreset Resource preset (nano, micro, small, medium, large, xlarge, 2xlarge, none)
+  resourcesPreset: "small"
+  ## @param backend.resources Set container requests and limits for different resources
+  resources: {}
+
+  ## Backend liveness probe
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  ## @param backend.customLivenessProbe Custom liveness probe override
+  customLivenessProbe: {}
+
+  ## Backend readiness probe
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  ## @param backend.customReadinessProbe Custom readiness probe override
+  customReadinessProbe: {}
+
+  ## Backend startup probe
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+    successThreshold: 1
+  ## @param backend.customStartupProbe Custom startup probe override
+  customStartupProbe: {}
+
+  ## Backend server configuration
+  server:
+    ## @param backend.server.useTls Enable TLS inside the container (set to false when TLS terminates at ingress)
+    useTls: false
+    ## @param backend.server.port Backend listen port
+    port: 8080
+    ## @param backend.server.allowedOrigins Regex string for allowed WebSocket origins
+    ## When empty the server uses a permissive default suitable for ingress-fronted deployments.
+    allowedOrigins: ""
+    ## @param backend.server.certFile Path to TLS cert file (when useTls=true)
+    certFile: "cert.pem"
+    ## @param backend.server.keyFile Path to TLS key file (when useTls=true)
+    keyFile: "key.pem"
+
+  ## TLS certs mounted into the backend container (only used when server.useTls=true)
+  tls:
+    ## @param backend.tls.enabled Generate a TLS secret from values
+    enabled: false
+    ## @param backend.tls.existingSecret Use an existing secret for TLS certs
+    existingSecret: ""
+    ## @param backend.tls.cert Inline TLS certificate (PEM)
+    cert: ""
+    ## @param backend.tls.key Inline TLS key (PEM)
+    key: ""
+
+  ## @param backend.extraEnvVars Array with extra environment variables
+  extraEnvVars: []
+  ## @param backend.extraEnvVarsCM Name of existing ConfigMap with extra env vars
+  extraEnvVarsCM: ""
+  ## @param backend.extraEnvVarsSecret Name of existing Secret with extra env vars
+  extraEnvVarsSecret: ""
+
+  ## @param backend.extraVolumes Optionally specify extra list of additional volumes for the backend pods
+  extraVolumes: []
+  ## @param backend.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the backend container
+  extraVolumeMounts: []
+  ## @param backend.initContainers Add additional init containers to the backend pods
+  initContainers: []
+  ## @param backend.sidecars Add additional sidecar containers to the backend pods
+  sidecars: []
+
+  ## Network policy
+  networkPolicy:
+    ## @param backend.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+    enabled: false
+
+  ## Autoscaling
+  autoscaling:
+    ## @param backend.autoscaling.enabled Enable HPA for the backend
+    enabled: false
+    ## @param backend.autoscaling.minReplicas Minimum number of replicas
+    minReplicas: 1
+    ## @param backend.autoscaling.maxReplicas Maximum number of replicas
+    maxReplicas: 3
+    ## @param backend.autoscaling.targetCPUUtilizationPercentage Target CPU utilization percentage
+    targetCPUUtilizationPercentage: 80
+    ## @param backend.autoscaling.targetMemoryUtilizationPercentage Target Memory utilization percentage
+    targetMemoryUtilizationPercentage: 80
+
+  ## Pod Disruption Budget
+  pdb:
+    ## @param backend.pdb.create Enable a Pod Disruption Budget for backend
+    create: false
+    ## @param backend.pdb.minAvailable Min number of pods that must still be available
+    minAvailable: 0
+    ## @param backend.pdb.maxUnavailable Max number of pods that can be unavailable
+    maxUnavailable: 1
+
+  ## @param backend.nodeSelector Node labels for backend pod assignment
+  nodeSelector: {}
+  ## @param backend.tolerations Tolerations for backend pod assignment
+  tolerations: []
+  ## @param backend.affinity Map of backend node/pod affinities
+  affinity: {}
+  ## @param backend.podAffinityPreset Pod affinity preset
+  podAffinityPreset: ""
+  ## @param backend.podAntiAffinityPreset Pod anti-affinity preset
+  podAntiAffinityPreset: soft
+  ## @param backend.nodeAffinityPreset.type Node affinity preset type
+  ## @param backend.nodeAffinityPreset.key Node affinity preset key
+  ## @param backend.nodeAffinityPreset.values Node affinity preset values
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  ## @param backend.topologySpreadConstraints Topology Spread Constraints for backend pod assignment
+  topologySpreadConstraints: []
+  ## @param backend.lifecycleHooks Add lifecycle hooks for backend container
+  lifecycleHooks: {}
+
+  service:
+    ## @param backend.service.type Kubernetes Service type
+    type: ClusterIP
+    ## @param backend.service.ports.ws Backend service WebSocket port
+    ports:
+      ws: 8080
+    ## @param backend.service.clusterIP Backend service Cluster IP
+    clusterIP: ""
+    ## @param backend.service.nodePorts.ws Backend service node port (when type=NodePort)
+    nodePorts:
+      ws: ""
+    ## @param backend.service.sessionAffinity Control where client requests go
+    sessionAffinity: ClientIP
+    ## @param backend.service.sessionAffinityConfig Additional settings for the sessionAffinity
+    sessionAffinityConfig: {}
+    ## @param backend.service.externalTrafficPolicy Backend service external traffic policy
+    externalTrafficPolicy: Cluster
+    ## @param backend.service.loadBalancerIP loadBalancerIP if service type is LoadBalancer
+    loadBalancerIP: ""
+    ## @param backend.service.loadBalancerSourceRanges loadBalancerSourceRanges if service type is LoadBalancer
+    loadBalancerSourceRanges: []
+    ## @param backend.service.loadBalancerClass loadBalancerClass if service type is LoadBalancer
+    loadBalancerClass: ""
+    ## @param backend.service.annotations Additional custom annotations for the backend service
+    annotations: {}
+
+## @section Ingress parameters
+##
+ingress:
+  ## @param ingress.enabled Enable ingress record generation
+  enabled: false
+  ## @param ingress.pathType Ingress Path type
+  pathType: ImplementationSpecific
+  ## @param ingress.ingressClassName IngressClass name
+  ingressClassName: ""
+  ## @param ingress.hostname Default host for the ingress record
+  hostname: townsquare.local
+  ## @param ingress.path Path prefix for frontend routes
+  path: /
+  ## @param ingress.wsPath Path prefix for WebSocket backend routes
+  wsPath: /ws
+  ## @param ingress.annotations Additional annotations for the Ingress resource
+  annotations: {}
+  # The chart already sets WebSocket-specific annotations; merge yours here.
+  # ingress.annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-prod
+
+  ## @param ingress.extraHosts The list of additional hostnames
+  extraHosts: []
+  ## @param ingress.extraPaths Any additional arbitrary paths that may need to be added to the ingress under the main host
+  extraPaths: []
+  ## @param ingress.extraRules The list of additional rules
+  extraRules: []
+
+  ## @param ingress.tls Enable TLS configuration
+  tls: false
+  ## @param ingress.selfSigned Create a TLS secret for this ingress record using self-signed certificates
+  selfSigned: false
+  ## @param ingress.tlsWwwPrefix Add www prefix to TLS certificate
+  tlsWwwPrefix: false
+  ## @param ingress.extraTls The tls configuration for additional hostnames
+  extraTls: []
+  ## @param ingress.secrets Custom TLS certificates as secrets
+  secrets: []
+  # secrets:
+  #   - name: townsquare.local-tls
+  #     key: |-
+  #       -----BEGIN RSA PRIVATE KEY-----
+  #       ...
+  #     certificate: |-
+  #       -----BEGIN CERTIFICATE-----
+  #       ...
+
+## @section Metrics parameters
+##
+metrics:
+  ## @param metrics.enabled Enable Prometheus metrics from the backend
+  enabled: false
+
+  serviceMonitor:
+    ## @param metrics.serviceMonitor.enabled Create ServiceMonitor resource for Prometheus Operator
+    enabled: false
+    ## @param metrics.serviceMonitor.namespace Namespace in which to deploy the ServiceMonitor
+    namespace: ""
+    ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service
+    jobLabel: ""
+    ## @param metrics.serviceMonitor.interval Scrape interval
+    interval: 30s
+    ## @param metrics.serviceMonitor.scrapeTimeout Scrape timeout
+    scrapeTimeout: ""
+    ## @param metrics.serviceMonitor.path Metrics endpoint path
+    path: /metrics
+    ## @param metrics.serviceMonitor.labels Extra labels for the ServiceMonitor
+    labels: {}
+    ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping
+    relabelings: []
+    ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
+    metricRelabelings: []
+    ## @param metrics.serviceMonitor.selector Selector for the ServiceMonitor
+    selector: {}
+
+  ## @param metrics.prometheusRule Create PrometheusRule resource for alerting
+  prometheusRule:
+    enabled: false
+    namespace: ""
+    labels: {}
+    rules: []
+
+## @section Service Account parameters
+##
+serviceAccount:
+  ## @param serviceAccount.create Enable ServiceAccount creation
+  create: true
+  ## @param serviceAccount.name Name of an existing ServiceAccount
+  name: ""
+  ## @param serviceAccount.annotations Annotations for the ServiceAccount
+  annotations: {}
+  ## @param serviceAccount.automountServiceAccountToken Auto-mount the service account token
+  automountServiceAccountToken: false
+
+## @section Extra resources
+##
+## @param extraDeploy Array of extra objects to deploy with the release
+extraDeploy: []

@@ -1,0 +1,45 @@
+apiVersion: v2
+name: townsquare
+description: Blood on the Clocktower Town Square - Helm chart for Kubernetes deployment
+type: application
+version: 1.0.4
+appVersion: "2.17.2"
+home: https://github.com/huscker/townsquare
+sources:
+  - https://github.com/huscker/townsquare
+keywords:
+  - botc
+  - townsquare
+  - clocktower
+  - game
+maintainers:
+  - name: huscker
+    email: egorgolubev@bulltrade.org
+annotations:
+  artifacthub.io/repository-id: 302d8d02-581f-4ac5-8134-1d36d5c5c1b3
+  artifacthub.io/license: GPL-3.0
+  artifacthub.io/links: |
+    - name: source
+      url: https://github.com/huscker/townsquare
+    - name: chart source
+      url: https://github.com/huscker/charts/tree/main/charts/townsquare
+    - name: support
+      url: https://github.com/huscker/charts/issues
+    - name: changelog
+      url: https://github.com/huscker/townsquare/blob/develop/CHANGELOG.md
+  artifacthub.io/changes: |
+    - kind: added
+      description: Russian role names and ability descriptions in reference sheet and night order
+    - kind: added
+      description: Russian language support with in-app language switcher
+    - kind: added
+      description: Clear reminders and Sync state to players buttons for Storyteller
+  artifacthub.io/images: |
+    - name: townsquare-frontend
+      image: ghcr.io/huscker/townsquare-frontend:2.15.2
+    - name: townsquare-backend
+      image: ghcr.io/huscker/townsquare-backend:2.15.2
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    version: 2.x.x

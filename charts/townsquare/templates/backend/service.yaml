@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "townsquare.backend.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: backend
+  {{- if or .Values.backend.service.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.backend.service.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.backend.service.type }}
+  {{- if and .Values.backend.service.clusterIP (eq .Values.backend.service.type "ClusterIP") }}
+  clusterIP: {{ .Values.backend.service.clusterIP }}
+  {{- end }}
+  {{- if ne .Values.backend.service.sessionAffinity "None" }}
+  sessionAffinity: {{ .Values.backend.service.sessionAffinity }}
+  {{- with .Values.backend.service.sessionAffinityConfig }}
+  sessionAffinityConfig: {{- include "common.tplvalues.render" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- if or (eq .Values.backend.service.type "LoadBalancer") (eq .Values.backend.service.type "NodePort") }}
+  externalTrafficPolicy: {{ .Values.backend.service.externalTrafficPolicy | quote }}
+  {{- end }}
+  {{- if and (eq .Values.backend.service.type "LoadBalancer") (not (empty .Values.backend.service.loadBalancerSourceRanges)) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.backend.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .Values.backend.service.type "LoadBalancer") (not (empty .Values.backend.service.loadBalancerIP)) }}
+  loadBalancerIP: {{ .Values.backend.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and (eq .Values.backend.service.type "LoadBalancer") .Values.backend.service.loadBalancerClass }}
+  loadBalancerClass: {{ .Values.backend.service.loadBalancerClass }}
+  {{- end }}
+  ports:
+    - name: ws
+      port: {{ .Values.backend.service.ports.ws }}
+      targetPort: ws
+      {{- if and (or (eq .Values.backend.service.type "NodePort") (eq .Values.backend.service.type "LoadBalancer")) (not (empty .Values.backend.service.nodePorts.ws)) }}
+      nodePort: {{ .Values.backend.service.nodePorts.ws }}
+      {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.backend.podLabels .Values.commonLabels ) "context" . ) }}
+  selector: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: backend

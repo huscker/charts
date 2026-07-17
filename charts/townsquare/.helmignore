@@ -1,0 +1,20 @@
+# Patterns to ignore when building helm packages.
+
+# Common backup files and VCS dirs
+*.bak
+*.orig
+*.swp
+.DS_Store
+.git/
+.gitignore
+.github/
+
+# IDE / editor directories
+.idea/
+.vscode/
+*.iml
+
+# Project-specific files that don't belong in the chart package
+node_modules/
+dist/
+*.pem
