@@ -2,7 +2,7 @@ apiVersion: v2
 name: s-ui
 description: Web panel built on SagerNet/Sing-Box for managing multi-protocol proxy services
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: "1.5.3"
 home: https://github.com/alireza0/s-ui
 sources:

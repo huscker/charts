@@ -2,7 +2,7 @@ apiVersion: v2
 name: sing-box
 description: Universal proxy platform based on SagerNet/sing-box
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: "1.12.0"
 home: https://github.com/SagerNet/sing-box
 sources:
