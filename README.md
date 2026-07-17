@@ -15,8 +15,8 @@ helm repo update
 
 | Chart | Description | Version |
 |-------|-------------|---------|
-| [s-ui](./charts/s-ui) | Web panel built on SagerNet/Sing-Box | 1.0.2 |
-| [sing-box](./charts/sing-box) | Universal proxy platform (SagerNet/sing-box) | 1.0.2 |
+| [s-ui](./charts/s-ui) | Web panel built on SagerNet/Sing-Box | 1.0.3 |
+| [sing-box](./charts/sing-box) | Universal proxy platform (SagerNet/sing-box) | 1.0.3 |
 | [townsquare](./charts/townsquare) | Blood on the Clocktower Town Square — self-hosted grimoire and player view | 1.0.4 |
 
 ## Contributing
